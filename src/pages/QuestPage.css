@@ -1,0 +1,34 @@
+/* src/pages/QuestPage.css */
+.quest-page-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--character-color, #8bc34a);
+}
+
+.quest-header h1 {
+  color: #333;
+  margin: 0;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: bold;
+  color: #666;
+}
+
+.quest-footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-style: italic;
+  color: #666;
+}
