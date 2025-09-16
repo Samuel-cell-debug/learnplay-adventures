@@ -1,34 +1,33 @@
+// src/App.jsx
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import HomePage from './pages/HomePage'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // State to manage the current page/view
+  const [currentPage, setCurrentPage] = useState('home');
+
+  // Function to navigate to different pages
+  const navigateTo = (pageName) => {
+    setCurrentPage(pageName);
+  }
+
+  // Render the current page
+  const renderCurrentPage = () => {
+    switch(currentPage) {
+      case 'home':
+        return <HomePage onStart={() => navigateTo('character-select')} />;
+      case 'character-select':
+        return <div>Character Selection Screen - Coming Next!</div>;
+      default:
+        return <HomePage onStart={() => navigateTo('character-select')} />;
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="app">
+      {renderCurrentPage()}
+    </div>
   )
 }
 
