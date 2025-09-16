@@ -3,12 +3,14 @@ import { useState } from 'react'
 import './App.css'
 import HomePage from './pages/HomePage'
 import CharacterSelect from './pages/CharacterSelect'
-import QuestPage from './pages/QuestPage' // Import the new QuestPage
+import QuestPage from './pages/QuestPage'
+import { usePlayerProgress } from './hooks/usePlayerProgress' // Import the new hook
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [playerXp, setPlayerXp] = useState(0); // Track total XP earned
+  // Use the hook to manage XP. This now saves to the database!
+  const { totalXp, isLoading, saveProgress } = usePlayerProgress();
 
   const navigateTo = (pageName) => {
     setCurrentPage(pageName);
@@ -16,16 +18,19 @@ function App() {
 
   const handleSelectCharacter = (character) => {
     setSelectedCharacter(character);
-    navigateTo('quest'); // Now go straight to the quest!
+    navigateTo('quest');
   }
 
-  // This is called when the quest is completed
-  const handleQuestComplete = (earnedXp) => {
-    setPlayerXp(earnedXp);
-    alert(`Quest Complete! You earned ${earnedXp} XP! 🎉`); // Simple feedback for now
-    // In the future, we'll go to a rewards screen here
-    navigateTo('character-select'); // Go back to character select for now
+  const handleQuestComplete = async (earnedXp) => {
+    await saveProgress(earnedXp); // Save the earned XP to the database
+    alert(`Quest Complete! You earned ${earnedXp} XP! 🎉 Total XP: ${totalXp + earnedXp}`);
+    navigateTo('character-select');
   };
+
+  // Show a loading screen while fetching progress from the database
+  if (isLoading) {
+    return <div className="app">Loading your adventures...</div>;
+  }
 
   const renderCurrentPage = () => {
     switch(currentPage) {
