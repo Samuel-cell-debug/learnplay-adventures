@@ -1,0 +1,32 @@
+/* src/components/CharacterCard.css */
+.character-card {
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.character-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.character-image {
+  font-size: 4rem; /* Makes the emoji big */
+  margin-bottom: 1rem;
+}
+
+.character-info h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.character-info p {
+  color: #666;
+  font-size: 0.9rem;
+}

@@ -2,23 +2,28 @@
 import { useState } from 'react'
 import './App.css'
 import HomePage from './pages/HomePage'
+import CharacterSelect from './pages/CharacterSelect' // Import the new component
 
 function App() {
-  // State to manage the current page/view
   const [currentPage, setCurrentPage] = useState('home');
+  const [selectedCharacter, setSelectedCharacter] = useState(null); // Track selected character
 
-  // Function to navigate to different pages
   const navigateTo = (pageName) => {
     setCurrentPage(pageName);
   }
 
-  // Render the current page
+  const handleSelectCharacter = (character) => {
+    setSelectedCharacter(character);
+    console.log("Selected character:", character); // We'll see this in the browser's console
+    // navigateTo('quest'); // We will set this up after building the quest logic
+  }
+
   const renderCurrentPage = () => {
     switch(currentPage) {
       case 'home':
         return <HomePage onStart={() => navigateTo('character-select')} />;
       case 'character-select':
-        return <div>Character Selection Screen - Coming Next!</div>;
+        return <CharacterSelect onSelectCharacter={handleSelectCharacter} />;
       default:
         return <HomePage onStart={() => navigateTo('character-select')} />;
     }
