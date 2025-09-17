@@ -2,36 +2,42 @@
 import './CharacterSelect.css';
 import CharacterCard from '../components/CharacterCard';
 
-// This is our character data. Later, we can move it to a separate file.
 const CHARACTERS = [
   {
     id: 'puppy-paa',
     name: 'Puppy Paa',
     description: 'Loves stories and words! Helps with reading.',
     image: '🐶',
-    color: '#6fb2e0', // Light blue
+    color: '#6fb2e0',
   },
   {
     id: 'horse-nii',
     name: 'Horse Nii',
     description: 'Great at counting and puzzles! Helps with math.',
     image: '🐴',
-    color: '#8bc34a', // Light green
+    color: '#8bc34a',
   },
   {
     id: 'kofi-chef',
     name: 'Kofi the Chef',
     description: 'Mixes reading and math to cook up fun!',
     image: '👨🏾‍🍳',
-    color: '#ff9800', // Orange
+    color: '#ff9800',
   }
 ];
 
-const CharacterSelect = ({ onSelectCharacter }) => {
+const CharacterSelect = ({ onSelectCharacter, onOpenDashboard }) => {
   return (
     <div className="character-select-container">
-      <h1>Choose Your Guide!</h1>
-      <p>Who do you want to learn with today?</p>
+      <div className="character-select-header">
+        <div>
+          <h1>Choose Your Guide!</h1>
+          <p>Who do you want to learn with today?</p>
+        </div>
+        <button onClick={onOpenDashboard} className="dashboard-button">
+          📊 Parent Dashboard
+        </button>
+      </div>
 
       <div className="characters-grid">
         {CHARACTERS.map((character) => (

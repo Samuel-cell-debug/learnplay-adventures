@@ -2,59 +2,75 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 
-// A simple, default player ID for the MVP. Later, we can add user accounts.
 const DEFAULT_PLAYER_ID = 'samuel-child-1';
 
 export const usePlayerProgress = () => {
   const [totalXp, setTotalXp] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load progress when the app starts
-  useEffect(() => {
-    loadProgress();
-  }, []);
-
+  // Load progress from Supabase
   const loadProgress = async () => {
     try {
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('player_progress')
         .select('total_xp')
         .eq('player_name', DEFAULT_PLAYER_ID)
-        .maybeSingle(); // Use maybeSingle() to return null if no record exists
+        .single(); // Use .single() to get one record
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "No rows found"
         console.error('Error loading progress:', error);
-      } else if (data) {
-        setTotalXp(data.total_xp);
+        return;
       }
+
+      // If we found data, set the XP. Otherwise, keep it at 0.
+      setTotalXp(data?.total_xp || 0);
     } catch (error) {
-      console.error('Unexpected error loading progress:', error);
+      console.error('Unexpected error in loadProgress:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Save progress to Supabase
   const saveProgress = async (newXp) => {
     const updatedTotalXp = totalXp + newXp;
-    setTotalXp(updatedTotalXp);
+    
+    try {
+      // Upsert is a combination of insert and update.
+      // It first tries to update a record that matches the UNIQUE constraint on `player_name`.
+      // If no record matches, it inserts a new one.
+      const { error } = await supabase
+        .from('player_progress')
+        .upsert(
+          { 
+            player_name: DEFAULT_PLAYER_ID, 
+            total_xp: updatedTotalXp 
+          },
+          {
+            onConflict: 'player_name', // This is the key
+            ignoreDuplicates: false // This is important
+          }
+        );
 
-    // Upsert: Update if record exists, otherwise insert a new one.
-    const { error } = await supabase
-      .from('player_progress')
-      .upsert(
-        { 
-          player_name: DEFAULT_PLAYER_ID, 
-          total_xp: updatedTotalXp 
-        },
-        { onConflict: 'player_name' } // This tells Supabase which column has the unique constraint
-      );
+      if (error) {
+        throw error;
+      }
 
-    if (error) {
-      console.error('Error saving progress:', error);
-    } else {
-      console.log('Progress saved successfully!');
+      // Only update the local state if the database save was successful
+      console.log('Progress saved successfully to DB! Total XP:', updatedTotalXp);
+      setTotalXp(updatedTotalXp);
+
+    } catch (error) {
+      console.error('Error saving progress to DB:', error);
+      // Revert the local state on error
+      alert('Could not save progress. Please check your connection.');
     }
   };
 
-  return { totalXp, isLoading, saveProgress };
+  // Load progress when the hook is first used
+  useEffect(() => {
+    loadProgress();
+  }, []);
+
+  return { totalXp, isLoading, saveProgress, loadProgress };
 };
